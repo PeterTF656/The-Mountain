@@ -18,12 +18,14 @@ import * as tf from "@tensorflow/tfjs";
 // NEW MODEL
 import * as facemesh from "@tensorflow-models/face-landmarks-detection";
 import Webcam from "react-webcam";
-import { drawMesh } from "./utilities";
+import { drawTri } from "./utilities";
+import { drawDots } from "./Dots"
 import DasAlerts from "./report";
 import AppBar from "./AppBar";
 
-import {Button, Container, ButtonGroup, makeStyles} from '@material-ui/core';
-
+import {Button, Container, ButtonGroup, makeStyles, Grid} from '@material-ui/core';
+import ImgCard from "./Snip.js";
+import FaceFeedback from "./Accordion"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     '& > *': {
       margin: theme.spacing(),
     },
+  grid_root: {
+    flexGrow: 1,
+  }
   },
 }));
 
@@ -41,6 +46,7 @@ function App() {
   const classes = useStyles();
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+  const canvasRef_Tri = useRef(null);
   const [draw, setDraw] = useState(0);
   const [visible, setAlertVisibility] = useState(false);
   const [eyeVisible, setEyeVisibility] = useState(false);
@@ -55,11 +61,17 @@ function App() {
   const [id_359, setId_359] = useState([0.212,0.212])
   const [id_356, setId_356] = useState([0.01,0.01])
   const [showCanvas, setShowCanvas] = useState(true)
+  const [imgSrc, setImgSrc] = React.useState(null);
+
+  // take photos
+    const capture = React.useCallback(() => {
+      const imageSrc = webcamRef.current.getScreenshot({width: 400, height: 400});
+      setImgSrc(imageSrc);
+    }, [webcamRef, setImgSrc]);
 
 
-  
   //  Load posenet
-  const runFacemesh = async (key) => {
+  const runFaceTri = async (key) => {
     // OLD MODEL
     // const net = await facemesh.load({
     //   inputResolution: { width: 640, height: 480 },
@@ -68,11 +80,11 @@ function App() {
     // NEW MODEL
     const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
     setInterval(() => {
-      detect(net, key);
-    }, 5);
+      detectTri(net, key);
+    }, 1);
   };
 
-  const detect = async (net, key) => {
+  const detectTri = async (net, key) => {
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null &&
@@ -88,15 +100,11 @@ function App() {
       webcamRef.current.video.height = videoHeight;
 
       // Set canvas width
-      if (canvasRef.current !== null) {
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
+      if (canvasRef_Tri.current !== null) {
+      canvasRef_Tri.current.width = videoWidth;
+      canvasRef_Tri.current.height = videoHeight;
       }
 
-      // Make Detections
-      // OLD MODEL
-      //       const face = await net.estimateFaces(video);
-      // NEW MODEL
       const face = await net.estimateFaces({input:video});
       // console.log(face);
 
@@ -125,19 +133,85 @@ function App() {
       }
 
       // Get canvas context
-      if (canvasRef.current !== null) {
-      const ctx = canvasRef.current.getContext("2d");
-      requestAnimationFrame(()=>{drawMesh(face, ctx, draw)});
+      if (canvasRef_Tri.current !== null) {
+      const ctx = canvasRef_Tri.current.getContext("2d");
+      requestAnimationFrame(()=>{drawTri(face, ctx, draw, (draw > 0 ? false : true))});
       }
     }
   };
 
-  useEffect(()=>{runFacemesh(); return () => {}},[showCanvas]);
+  const runFaceDots = async (key) => {
+    // OLD MODEL
+    // const net = await facemesh.load({
+    //   inputResolution: { width: 640, height: 480 },
+    //   scale: 0.8,
+    // });
+    // NEW MODEL
+    const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
+    setInterval(() => {
+      detectDots(net, key);
+    }, 1);
+  };
+
+  const detectDots = async (net, key) => {
+    if (
+      typeof webcamRef.current !== "undefined" &&
+      webcamRef.current !== null &&
+      webcamRef.current.video.readyState === 4
+    ) {
+      // Get Video Properties
+      const video = webcamRef.current.video;
+      const videoWidth = webcamRef.current.video.videoWidth;
+      const videoHeight = webcamRef.current.video.videoHeight;
+
+      // Set video width
+      webcamRef.current.video.width = videoWidth;
+      webcamRef.current.video.height = videoHeight;
+
+      // Set canvas width
+      if (canvasRef.current !== null) {
+      canvasRef.current.width = videoWidth;
+      canvasRef.current.height = videoHeight;
+      }
+
+      // Make Detections
+      // OLD MODEL
+      //       const face = await net.estimateFaces(video);
+      // NEW MODEL
+      const face = await net.estimateFaces({input:video});
+      // console.log(face);
+      // Get canvas context
+      if (canvasRef.current !== null) {
+      const ctx = canvasRef.current.getContext("2d");
+      requestAnimationFrame(()=>{drawDots(face, ctx, draw, (draw > 0 ? false : true))});
+      }
+    }
+  };
+
+  useEffect(()=>{runFaceTri(); return () => {}},[showCanvas]);
+  useEffect(()=>{runFaceDots(); return () => {}}, [showCanvas])
 
   return (
     <div className="App">
       <AppBar/>
       <Container>
+      <Button onClick={capture}>Take a photo</Button>
+      <Grid container className={classes.grid_root} spacing={2}>
+        <Grid item xs={6}>
+          {imgSrc && (
+            // <img
+            //   src={imgSrc}
+            // />
+            <ImgCard img={imgSrc} />
+          )}
+        </Grid>
+        <Grid item xs={6}>
+          {imgSrc && (
+          <FaceFeedback />
+          )}
+        </Grid>
+      </Grid>
+        {/* second button group */}
       <div className={classes.root}>
       <ButtonGroup variant="contained" color="secondary" aria-label="contained primary button group">
         <Button
@@ -152,7 +226,6 @@ function App() {
         </Button>
         </ButtonGroup>
       </div>
-      <div>draw is {draw}</div>
       {/* <div>current draw is {draw}.</div> */}
       <div className={classes.root}>
       <ButtonGroup size="small" variant="contained" color="secondary" aria-label="contained primary button group">
@@ -218,6 +291,7 @@ function App() {
       <header className="App-header">
         <Webcam
           ref={webcamRef}
+          screenshotFormat="image/jpeg"
           style={{
             position: "absolute",
             marginLeft: "auto",
@@ -245,9 +319,9 @@ function App() {
             height: 750,
           }}
         />}
-        {showCanvas === true &&
+        {showCanvas === false &&
         <canvas
-          ref={canvasRef}
+          ref={canvasRef_Tri}
           style={{
             position: "absolute",
             marginLeft: "auto",

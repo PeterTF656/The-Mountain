@@ -105,7 +105,7 @@ const drawPath = (ctx, points, closePath) => {
 };
 
 // Drawing Mesh
-export const drawMesh = (predictions, ctx, key, dots) => {
+export const drawTri = (predictions, ctx, key, dots) => {
   if (predictions.length > 0) {
     predictions.forEach((prediction) => {
       const keypoints = prediction.scaledMesh;
@@ -121,19 +121,6 @@ export const drawMesh = (predictions, ctx, key, dots) => {
         ].map((index) => keypoints[index]);
         //  Draw triangle
         drawPath(ctx, points, true);
-      }
-
-      // Draw Dots
-      if (dots === true) {
-        for (let i = 0; i < keypoints.length; i++) {
-          const x = keypoints[i][0];
-          const y = keypoints[i][1];
-
-          ctx.beginPath();
-          ctx.arc(x, y, 1 /* radius */, 0, 3 * Math.PI);
-          ctx.fillStyle = "white";
-          ctx.fill();
-        }
       }
     });
   }
