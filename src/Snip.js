@@ -1,5 +1,5 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useRef, useEffect, useCallback} from 'react';
+import { makeStyles, } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -16,6 +16,41 @@ const useStyles = makeStyles({
 
 export default function ImgCard(props) {
   const classes = useStyles();
+  const [isSendingSkin, setIsSendingSkin] = useState(false);
+  const [isSendingOrgans, setIsSendingOrgans] = useState(false);
+  const isMounted = useRef(true);
+
+  // set isMounted to false when we unmount the component
+  useEffect(() => {
+      return () => {
+        isMounted.current = false
+      }
+    }, [])
+
+  const sendSkinRequest = useCallback(async() => {
+    if (isSendingSkin) return
+    // update state
+    setIsSendingSkin(true)
+    var data = new FormData();
+    var file = props.img
+    data.append('file', file)
+    for(var pair of data.entries()) {
+        console.log(pair[0]+ ', '+ pair[1]); 
+   }
+   try{    
+    const result = await fetch('https://aebbe9f73e8e.ngrok.io/predict', {
+      method: 'POST',
+      //headers: { "Content-Type": "multipart/form-data" },
+      body: data,
+  });
+    const res = await result.json(); 
+    console.log(res)
+  }catch(e){
+  return null;
+}
+if (isMounted.current) // only update if we are still mounted
+setIsSendingSkin(false)
+}, [isSendingSkin]) // update the callback if the state changes
 
   return (
     <Card className={classes.root}>
@@ -37,7 +72,7 @@ export default function ImgCard(props) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" color="primary">
+        <Button size="small" color="primary" disabled={isSendingSkin} onClick={sendSkinRequest}>
           皮肤状态
         </Button>
         <Button size="small" color="primary">
