@@ -28,15 +28,28 @@ export default function ImgCard(props) {
     }, [])
 
   const sendSkinRequest = useCallback(async() => {
+
+    function DataURIToBlob(dataURI) {
+        const splitDataURI = dataURI.split(',')
+        const byteString = splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1])
+        const mimeString = splitDataURI[0].split(':')[1].split(';')[0]
+
+        const ia = new Uint8Array(byteString.length)
+        for (let i = 0; i < byteString.length; i++)
+            ia[i] = byteString.charCodeAt(i)
+
+        return new Blob([ia], { type: mimeString })
+      }
+
     if (isSendingSkin) return
     // update state
     setIsSendingSkin(true)
+    const file = DataURIToBlob(props.img)
     var data = new FormData();
-    var file = props.img
     data.append('file', file)
-    for(var pair of data.entries()) {
-        console.log(pair[0]+ ', '+ pair[1]); 
-   }
+//     for(var pair of data.entries()) {
+//         console.log(pair[0]+ ', '+ pair[1]); 
+//    }
    try{    
     const result = await fetch('https://aebbe9f73e8e.ngrok.io/predict', {
       method: 'POST',
@@ -44,7 +57,7 @@ export default function ImgCard(props) {
       body: data,
   });
     const res = await result.json(); 
-    console.log(res)
+    console.log(data)
   }catch(e){
   return null;
 }
