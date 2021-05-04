@@ -21,13 +21,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FaceFeedback() {
+export default function FaceFeedback(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
+
 
   return (
     <div className={classes.root}>
