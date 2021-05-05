@@ -23,9 +23,14 @@ import { drawDots } from "./Dots"
 import DasAlerts from "./report";
 import AppBar from "./AppBar";
 
-import {Button, Container, ButtonGroup, makeStyles, Grid, Box} from '@material-ui/core';
+import {Button, Container, ButtonGroup, makeStyles, Fab} from '@material-ui/core';
 import ImgCard from "./Snip.js";
-import FaceFeedback from "./Accordion"
+
+// import AddIcon from '@material-ui/icons/Add';
+// import EditIcon from '@material-ui/icons/Edit';
+// import UpIcon from '@material-ui/icons/KeyboardArrowUp';
+// import { green } from '@material-ui/core/colors';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,10 +39,41 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     '& > *': {
       margin: theme.spacing(),
+      marginTop: theme.spacing(3),
     },
-  grid_root: {
-    flexGrow: 1,
-  }
+  container_root: {
+    margin: theme.spacing(2),
+  },
+  // fab_one: {
+  //   position: 'absolute',
+  //   bottom: theme.spacing(2),
+  //   left: theme.spacing(2),
+  // },
+  // fab_two: {
+  //   position: 'absolute',
+  //   bottom: theme.spacing(3),
+  //   left: theme.spacing(2),
+  // },
+  // fab_three: {
+  //   position: 'absolute',
+  //   bottom: theme.spacing(4),
+  //   left: theme.spacing(2),
+  // },
+  // fab_four: {
+  //   position: 'absolute',
+  //   bottom: theme.spacing(5),
+  //   left: theme.spacing(2),
+  // },
+  // fab_five: {
+  //   position: 'absolute',
+  //   bottom: theme.spacing(6),
+  //   left: theme.spacing(2),
+  // },
+  // fab_six: {
+  //   position: 'absolute',
+  //   bottom: theme.spacing(7),
+  //   left: theme.spacing(2),
+  // },
   },
 }));
 
@@ -194,23 +230,16 @@ function App() {
   return (
     <div className="App">
       <AppBar/>
-      <Container>
-      <Button onClick={capture}>Take a photo</Button>
-      <Grid container className={classes.grid_root} spacing={2}>
-        <Grid item xs={6}>
-          {imgSrc && (
+      <Container className={classes.container_root}>
+      <Container className={classes.container_root}>
+      <Button variant="contained" color="secondary" onClick={capture}>拍照截图</Button>
+        {imgSrc && (
             // <img
             //   src={imgSrc}
             // />
             <ImgCard img={imgSrc} />
-          )}
-        </Grid>
-        <Grid item xs={6}>
-          {imgSrc && (
-          <FaceFeedback />
-          )}
-        </Grid>
-      </Grid>
+        )}
+      </Container>
         {/* second button group */}
       <div className={classes.root}>
       <ButtonGroup variant="contained" color="secondary" aria-label="contained primary button group">
@@ -334,7 +363,6 @@ function App() {
             height: 750,
           }}
         />}
-
       </header>
     </div>
   );
