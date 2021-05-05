@@ -23,10 +23,9 @@ import { drawDots } from "./Dots"
 import DasAlerts from "./report";
 import AppBar from "./AppBar";
 
-import {Button, Container, ButtonGroup, makeStyles, Fab} from '@material-ui/core';
+import {Button, Container, ButtonGroup, makeStyles, Fab, Grid, Box} from '@material-ui/core';
 import ImgCard from "./Snip.js";
-
-// import AddIcon from '@material-ui/icons/Add';
+import CameraAltRoundedIcon from '@material-ui/icons/CameraAltRounded';
 // import EditIcon from '@material-ui/icons/Edit';
 // import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 // import { green } from '@material-ui/core/colors';
@@ -43,12 +42,13 @@ const useStyles = makeStyles((theme) => ({
     },
   container_root: {
     margin: theme.spacing(2),
+    display: 'flex',
   },
-  // fab_one: {
-  //   position: 'absolute',
-  //   bottom: theme.spacing(2),
-  //   left: theme.spacing(2),
-  // },
+  fab_one: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    left: theme.spacing(2),
+  },
   // fab_two: {
   //   position: 'absolute',
   //   bottom: theme.spacing(3),
@@ -231,17 +231,18 @@ function App() {
     <div className="App">
       <AppBar/>
       <Container className={classes.container_root}>
-      <Container className={classes.container_root}>
-      <Button variant="contained" color="secondary" onClick={capture}>拍照截图</Button>
-        {imgSrc && (
-            // <img
-            //   src={imgSrc}
-            // />
-            <ImgCard img={imgSrc} />
-        )}
-      </Container>
+      {/* <Button variant="contained" color="secondary" onClick={capture}>拍照截图</Button> */}
+      <Grid container 
+        spacing={2} style={{margin: 10}}>
+      <Grid item xs={3}>
+      <Fab size="small" color="primary" aria-label="add" onClick={capture}> 
+        <CameraAltRoundedIcon />
+      </Fab>
+      </Grid>
         {/* second button group */}
-      <div className={classes.root}>
+        <Grid item xs={9}
+        display="flex"
+        >
       <ButtonGroup variant="contained" color="secondary" aria-label="contained primary button group">
         <Button
           onClick={() => setDraw(draw + 1)}
@@ -253,12 +254,7 @@ function App() {
         >
           返回上一个部位
         </Button>
-        </ButtonGroup>
-      </div>
-      {/* <div>current draw is {draw}.</div> */}
-      <div className={classes.root}>
-      <ButtonGroup size="small" variant="contained" color="secondary" aria-label="contained primary button group">
-      <Button 
+        <Button 
         onClick={()=> setTimeout(() => {setAlertVisibility(true)},3000)}>
           全脸扫描反馈
       </Button>
@@ -266,10 +262,6 @@ function App() {
         onClick={()=> setTimeout(() => {setEyeVisibility(true)},5000)}>
           眼部扫描反馈
       </Button>
-      </ButtonGroup>
-      </div>
-      <div className={classes.root}>
-      <ButtonGroup size="small" variant="contained" color="secondary" aria-label="contained primary button group">
       <Button 
         onClick={()=>{setShowCanvas(true)}}>
           显示标点
@@ -278,9 +270,18 @@ function App() {
         onClick={()=> {setShowCanvas(false)}}>
           隐藏标点
       </Button>
-      </ButtonGroup>
-      </div>
-
+        </ButtonGroup>
+        </Grid>
+        </Grid>
+      {/* <div>current draw is {draw}.</div> */}
+      <Box style={{margin: 10 }}>
+        {imgSrc && (
+            // <img
+            //   src={imgSrc}
+            // />
+            <ImgCard img={imgSrc} />
+        )}
+        </Box>
       </Container>
       <div>
       <DasAlerts

@@ -39,7 +39,7 @@ export default function FaceFeedback(props) {
         <TableHead>
           <TableRow>
             <TableCell>分析种类</TableCell>
-            <TableCell align="right">反馈报告</TableCell>
+            <TableCell align="center">反馈报告</TableCell>
 
           </TableRow>
         </TableHead>
@@ -49,7 +49,7 @@ export default function FaceFeedback(props) {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="right">{row.value}</TableCell>
+              <TableCell align="center">{row.value}</TableCell>
             </TableRow>
           ))}
         </TableBody>
