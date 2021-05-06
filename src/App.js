@@ -107,76 +107,62 @@ function App() {
 
 
   //  Load posenet
-  const runFaceTri = async (key) => {
-    // OLD MODEL
-    // const net = await facemesh.load({
-    //   inputResolution: { width: 640, height: 480 },
-    //   scale: 0.8,
-    // });
-    // NEW MODEL
-    const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
-    setInterval(() => {
-      detectTri(net, key);
-    }, 1);
-  };
+  // const runFaceTri = async (key) => {
 
-  const detectTri = async (net, key) => {
-    if (
-      typeof webcamRef.current !== "undefined" &&
-      webcamRef.current !== null &&
-      webcamRef.current.video.readyState === 4
-    ) {
-      // Get Video Properties
-      const video = webcamRef.current.video;
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
+  //   const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
+  //   const interval = setInterval(() => {
+  //     detectTri(net, key);
+  //   }, 1);
+  //   return ()=>clearInterval(interval);
+  // };
 
-      // Set video width
-      webcamRef.current.video.width = videoWidth;
-      webcamRef.current.video.height = videoHeight;
+  // const detectTri = async (net, key) => {
+  //   if (
+  //     typeof webcamRef.current !== "undefined" &&
+  //     webcamRef.current !== null &&
+  //     webcamRef.current.video.readyState === 4
+  //   ) {
+  //     // Get Video Properties
+  //     const video = webcamRef.current.video;
+  //     const videoWidth = webcamRef.current.video.videoWidth;
+  //     const videoHeight = webcamRef.current.video.videoHeight;
 
-      // Set canvas width
-      if (canvasRef_Tri.current !== null) {
-      canvasRef_Tri.current.width = videoWidth;
-      canvasRef_Tri.current.height = videoHeight;
-      }
+  //     // Set video width
+  //     webcamRef.current.video.width = videoWidth;
+  //     webcamRef.current.video.height = videoHeight;
 
-      const face = await net.estimateFaces({input:video});
-      // console.log(face);
+  //     // Set canvas width
+  //     if (canvasRef_Tri.current !== null) {
+  //     canvasRef_Tri.current.width = videoWidth;
+  //     canvasRef_Tri.current.height = videoHeight;
+  //     }
+
+  //     const face = await net.estimateFaces({input:video});
+  //     // console.log(face);
 
       
-      if (typeof face["0"] !== "undefined") {        
-        // face["0"].scaledMesh[9] = parseFloat(face["0"].scaledMesh[9]).toFixed(4);
-        // face["0"].scaledMesh[10] = parseFloat(face["0"].scaledMesh[10]).toFixed(4);
-        // face["0"].scaledMesh[2] = parseFloat(face["0"].scaledMesh[2]).toFixed(4);
-        // face["0"].scaledMesh[152] = parseFloat(face["0"].scaledMesh[152]).toFixed(4);
-        // face["0"].scaledMesh[127] = parseFloat(face["0"].scaledMesh[127]).toFixed(4);
-        // face["0"].scaledMesh[130] = parseFloat(face["0"].scaledMesh[130]).toFixed(4);
-        // face["0"].scaledMesh[243] = parseFloat(face["0"].scaledMesh[243]).toFixed(4);
-        // face["0"].scaledMesh[463] = parseFloat(face["0"].scaledMesh[463]).toFixed(4);
-        // face["0"].scaledMesh[359] = parseFloat(face["0"].scaledMesh[359]).toFixed(4);
-        // face["0"].scaledMesh[356] = parseFloat(face["0"].scaledMesh[356]).toFixed(4);
-        setId_9(face["0"].scaledMesh[9]);
-        setId_10(face["0"].scaledMesh[10]);
-        setId_2(face["0"].scaledMesh[2]);
-        setId_152(face["0"].scaledMesh[152]);
-        setId_127(face["0"].scaledMesh[127]);
-        setId_130(face["0"].scaledMesh[130]); 
-        setId_243(face["0"].scaledMesh[243]);
-        setId_463(face["0"].scaledMesh[463]);
-        setId_359(face["0"].scaledMesh[359]);
-        setId_356(face["0"].scaledMesh[356]);
-      }
+  //     if (typeof face["0"] !== "undefined") {        
+  //       setId_9(face["0"].scaledMesh[9]);
+  //       setId_10(face["0"].scaledMesh[10]);
+  //       setId_2(face["0"].scaledMesh[2]);
+  //       setId_152(face["0"].scaledMesh[152]);
+  //       setId_127(face["0"].scaledMesh[127]);
+  //       setId_130(face["0"].scaledMesh[130]); 
+  //       setId_243(face["0"].scaledMesh[243]);
+  //       setId_463(face["0"].scaledMesh[463]);
+  //       setId_359(face["0"].scaledMesh[359]);
+  //       setId_356(face["0"].scaledMesh[356]);
+  //     }
 
-      // Get canvas context
-      if (canvasRef_Tri.current !== null) {
-      const ctx = canvasRef_Tri.current.getContext("2d");
-      requestAnimationFrame(()=>{drawTri(face, ctx, draw, (draw > 0 ? false : true))});
-      }
-    }
-  };
+  //     // Get canvas context
+  //     if (canvasRef_Tri.current !== null) {
+  //     const ctx = canvasRef_Tri.current.getContext("2d");
+  //     requestAnimationFrame(()=>{drawTri(face, ctx, draw)});
+  //     }
+  //   }
+  // };
 
-  const runFaceDots = async (key) => {
+  const runFaceDots = async (key, dot) => {
     // OLD MODEL
     // const net = await facemesh.load({
     //   inputResolution: { width: 640, height: 480 },
@@ -185,11 +171,12 @@ function App() {
     // NEW MODEL
     const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
     setInterval(() => {
-      detectDots(net, key);
+      detectDots(net, key, dot);
     }, 1);
+    // return ()=>clearInterval(interval);
   };
 
-  const detectDots = async (net, key) => {
+  const detectDots = async (net, key, dot) => {
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null &&
@@ -216,16 +203,30 @@ function App() {
       // NEW MODEL
       const face = await net.estimateFaces({input:video});
       // console.log(face);
+      if (typeof face["0"] !== "undefined") {        
+        setId_9(face["0"].scaledMesh[9]);
+        setId_10(face["0"].scaledMesh[10]);
+        setId_2(face["0"].scaledMesh[2]);
+        setId_152(face["0"].scaledMesh[152]);
+        setId_127(face["0"].scaledMesh[127]);
+        setId_130(face["0"].scaledMesh[130]); 
+        setId_243(face["0"].scaledMesh[243]);
+        setId_463(face["0"].scaledMesh[463]);
+        setId_359(face["0"].scaledMesh[359]);
+        setId_356(face["0"].scaledMesh[356]);
+      }
       // Get canvas context
       if (canvasRef.current !== null) {
       const ctx = canvasRef.current.getContext("2d");
-      requestAnimationFrame(()=>{drawDots(face, ctx, draw, (draw > 0 ? false : true))});
+      console.log(showCanvas);
+      requestAnimationFrame(()=>{drawDots(face, ctx, draw, showCanvas)});
       }
     }
   };
 
-  useEffect(()=>{runFaceTri(); return () => {}},[showCanvas]);
-  useEffect(()=>{runFaceDots(); return () => {}}, [showCanvas])
+  // useEffect(()=>{ return () => {}},[showCanvas]);
+  useEffect(()=>{
+    runFaceDots(); return () => {clearInterval(runFaceDots)}}, [showCanvas])
 
   return (
     <div className="App">
@@ -334,7 +335,7 @@ function App() {
             height: 750,
           }}
         />
-        {showCanvas === true &&
+        {/* {showCanvas === true && */}
         <canvas
           ref={canvasRef}
           style={{
@@ -348,8 +349,9 @@ function App() {
             width: 1000,
             height: 750,
           }}
-        />}
-        {showCanvas === false &&
+        />
+        {/* } */}
+        {/* {showCanvas === false &&
         <canvas
           ref={canvasRef_Tri}
           style={{
@@ -363,7 +365,7 @@ function App() {
             width: 1000,
             height: 750,
           }}
-        />}
+        />} */}
       </header>
     </div>
   );
