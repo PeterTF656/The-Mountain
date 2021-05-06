@@ -8,12 +8,10 @@
 // 8. Draw functions DONE
 
 // Face Mesh - https://github.com/tensorflow/tfjs-models/tree/master/facemesh
-
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import "./App.css";
 import * as tf from "@tensorflow/tfjs";
-// OLD MODEL
-//import * as facemesh from "@tensorflow-models/facemesh";
+
 
 // NEW MODEL
 import * as facemesh from "@tensorflow-models/face-landmarks-detection";
@@ -40,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(),
       marginTop: theme.spacing(3),
     },
+  },
   container_root: {
     margin: theme.spacing(2),
     display: 'flex',
@@ -49,40 +48,16 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(2),
     left: theme.spacing(2),
   },
-  // fab_two: {
-  //   position: 'absolute',
-  //   bottom: theme.spacing(3),
-  //   left: theme.spacing(2),
-  // },
-  // fab_three: {
-  //   position: 'absolute',
-  //   bottom: theme.spacing(4),
-  //   left: theme.spacing(2),
-  // },
-  // fab_four: {
-  //   position: 'absolute',
-  //   bottom: theme.spacing(5),
-  //   left: theme.spacing(2),
-  // },
-  // fab_five: {
-  //   position: 'absolute',
-  //   bottom: theme.spacing(6),
-  //   left: theme.spacing(2),
-  // },
-  // fab_six: {
-  //   position: 'absolute',
-  //   bottom: theme.spacing(7),
-  //   left: theme.spacing(2),
-  // },
-  },
 }));
 
+let timer;
+let parts;
 
 function App() {
   const classes = useStyles();
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
-  const canvasRef_Tri = useRef(null);
+  const [showEyes, setShowEyes] = useState(false);
   const [draw, setDraw] = useState(0);
   const [visible, setAlertVisibility] = useState(false);
   const [eyeVisible, setEyeVisibility] = useState(false);
@@ -99,84 +74,46 @@ function App() {
   const [showCanvas, setShowCanvas] = useState(true)
   const [imgSrc, setImgSrc] = React.useState(null);
 
+  useEffect(()=>{
+    console.log("useeffect canvas:", showCanvas)
+    if (showCanvas) {
+    runFace(); 
+     return () => {clearInterval(timer)}
+    } else {
+      clearInterval(timer)
+    }
+    }, [showCanvas, draw])
+
   // take photos
     const capture = React.useCallback(() => {
       const imageSrc = webcamRef.current.getScreenshot({width: 400, height: 400});
       setImgSrc(imageSrc);
     }, [webcamRef, setImgSrc]);
-
-
-  //  Load posenet
-  // const runFaceTri = async (key) => {
-
-  //   const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
-  //   const interval = setInterval(() => {
-  //     detectTri(net, key);
-  //   }, 1);
-  //   return ()=>clearInterval(interval);
-  // };
-
-  // const detectTri = async (net, key) => {
-  //   if (
-  //     typeof webcamRef.current !== "undefined" &&
-  //     webcamRef.current !== null &&
-  //     webcamRef.current.video.readyState === 4
-  //   ) {
-  //     // Get Video Properties
-  //     const video = webcamRef.current.video;
-  //     const videoWidth = webcamRef.current.video.videoWidth;
-  //     const videoHeight = webcamRef.current.video.videoHeight;
-
-  //     // Set video width
-  //     webcamRef.current.video.width = videoWidth;
-  //     webcamRef.current.video.height = videoHeight;
-
-  //     // Set canvas width
-  //     if (canvasRef_Tri.current !== null) {
-  //     canvasRef_Tri.current.width = videoWidth;
-  //     canvasRef_Tri.current.height = videoHeight;
-  //     }
-
-  //     const face = await net.estimateFaces({input:video});
-  //     // console.log(face);
-
-      
-  //     if (typeof face["0"] !== "undefined") {        
-  //       setId_9(face["0"].scaledMesh[9]);
-  //       setId_10(face["0"].scaledMesh[10]);
-  //       setId_2(face["0"].scaledMesh[2]);
-  //       setId_152(face["0"].scaledMesh[152]);
-  //       setId_127(face["0"].scaledMesh[127]);
-  //       setId_130(face["0"].scaledMesh[130]); 
-  //       setId_243(face["0"].scaledMesh[243]);
-  //       setId_463(face["0"].scaledMesh[463]);
-  //       setId_359(face["0"].scaledMesh[359]);
-  //       setId_356(face["0"].scaledMesh[356]);
-  //     }
-
-  //     // Get canvas context
-  //     if (canvasRef_Tri.current !== null) {
-  //     const ctx = canvasRef_Tri.current.getContext("2d");
-  //     requestAnimationFrame(()=>{drawTri(face, ctx, draw)});
-  //     }
-  //   }
-  // };
-
-  const runFaceDots = async (key, dot) => {
-    // OLD MODEL
-    // const net = await facemesh.load({
-    //   inputResolution: { width: 640, height: 480 },
-    //   scale: 0.8,
-    // });
-    // NEW MODEL
+    
+   parts = draw;
+  //detect and draw dots on face
+  const runFace = useCallback(async (show) => {
     const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
-    setInterval(() => {
-      detectDots(net, key, dot);
-    }, 1);
-    // return ()=>clearInterval(interval);
-  };
+    console.log(parts);
+    if (parts === 1){
+      console.log("running tri");
+      timer = setInterval(() => {
+        detectTri(net) ;
+      }, 10);
+    }else if(parts === 2) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else{
+      console.log("running dots");
+    timer = setInterval(() => {
+      detectDots(net) ;
+    }, 10);}
+    return timer;
+  },[showCanvas]);
 
-  const detectDots = async (net, key, dot) => {
+  const detectDots = async (net) => {
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null &&
@@ -196,13 +133,8 @@ function App() {
       canvasRef.current.width = videoWidth;
       canvasRef.current.height = videoHeight;
       }
-
-      // Make Detections
-      // OLD MODEL
-      //       const face = await net.estimateFaces(video);
-      // NEW MODEL
       const face = await net.estimateFaces({input:video});
-      // console.log(face);
+
       if (typeof face["0"] !== "undefined") {        
         setId_9(face["0"].scaledMesh[9]);
         setId_10(face["0"].scaledMesh[10]);
@@ -218,15 +150,95 @@ function App() {
       // Get canvas context
       if (canvasRef.current !== null) {
       const ctx = canvasRef.current.getContext("2d");
-      console.log(showCanvas);
+      
       requestAnimationFrame(()=>{drawDots(face, ctx, draw, showCanvas)});
       }
     }
   };
 
-  // useEffect(()=>{ return () => {}},[showCanvas]);
-  useEffect(()=>{
-    runFaceDots(); return () => {clearInterval(runFaceDots)}}, [showCanvas])
+  const detectTri = async (net) => {
+    if (
+      typeof webcamRef.current !== "undefined" &&
+      webcamRef.current !== null &&
+      webcamRef.current.video.readyState === 4
+    ) {
+      // Get Video Properties
+      const video = webcamRef.current.video;
+      const videoWidth = webcamRef.current.video.videoWidth;
+      const videoHeight = webcamRef.current.video.videoHeight;
+
+      // Set video width
+      webcamRef.current.video.width = videoWidth;
+      webcamRef.current.video.height = videoHeight;
+
+      // Set canvas width
+      if (canvasRef.current !== null) {
+      canvasRef.current.width = videoWidth;
+      canvasRef.current.height = videoHeight;
+      }
+      const face = await net.estimateFaces({input:video});
+
+      if (typeof face["0"] !== "undefined") {        
+        setId_9(face["0"].scaledMesh[9]);
+        setId_10(face["0"].scaledMesh[10]);
+        setId_2(face["0"].scaledMesh[2]);
+        setId_152(face["0"].scaledMesh[152]);
+        setId_127(face["0"].scaledMesh[127]);
+        setId_130(face["0"].scaledMesh[130]); 
+        setId_243(face["0"].scaledMesh[243]);
+        setId_463(face["0"].scaledMesh[463]);
+        setId_359(face["0"].scaledMesh[359]);
+        setId_356(face["0"].scaledMesh[356]);
+      }
+      // Get canvas context
+      if (canvasRef.current !== null) {
+      const ctx = canvasRef.current.getContext("2d");
+      requestAnimationFrame(()=>{drawTri(face, ctx, 1, showCanvas)});
+      }
+    }
+  };
+
+  const detectEyeTwo = async (net) => {
+    if (
+      typeof webcamRef.current !== "undefined" &&
+      webcamRef.current !== null &&
+      webcamRef.current.video.readyState === 4
+    ) {
+      // Get Video Properties
+      const video = webcamRef.current.video;
+      const videoWidth = webcamRef.current.video.videoWidth;
+      const videoHeight = webcamRef.current.video.videoHeight;
+
+      // Set video width
+      webcamRef.current.video.width = videoWidth;
+      webcamRef.current.video.height = videoHeight;
+
+      // Set canvas width
+      if (canvasRef.current !== null) {
+      canvasRef.current.width = videoWidth;
+      canvasRef.current.height = videoHeight;
+      }
+      const face = await net.estimateFaces({input:video});
+
+      if (typeof face["0"] !== "undefined") {        
+        setId_9(face["0"].scaledMesh[9]);
+        setId_10(face["0"].scaledMesh[10]);
+        setId_2(face["0"].scaledMesh[2]);
+        setId_152(face["0"].scaledMesh[152]);
+        setId_127(face["0"].scaledMesh[127]);
+        setId_130(face["0"].scaledMesh[130]); 
+        setId_243(face["0"].scaledMesh[243]);
+        setId_463(face["0"].scaledMesh[463]);
+        setId_359(face["0"].scaledMesh[359]);
+        setId_356(face["0"].scaledMesh[356]);
+      }
+      // Get canvas context
+      if (canvasRef.current !== null) {
+      const ctx = canvasRef.current.getContext("2d");
+      requestAnimationFrame(()=>{drawTri(face, ctx, 2, showCanvas)});
+      }
+    }
+  };
 
   return (
     <div className="App">
@@ -274,7 +286,7 @@ function App() {
         </ButtonGroup>
         </Grid>
         </Grid>
-      {/* <div>current draw is {draw}.</div> */}
+      <div>current draw is {draw}.</div>
       <Box style={{margin: 10 }}>
         {imgSrc && (
             // <img
@@ -335,7 +347,7 @@ function App() {
             height: 750,
           }}
         />
-        {/* {showCanvas === true && */}
+        {showCanvas === true &&
         <canvas
           ref={canvasRef}
           style={{
@@ -350,7 +362,7 @@ function App() {
             height: 750,
           }}
         />
-        {/* } */}
+        }
         {/* {showCanvas === false &&
         <canvas
           ref={canvasRef_Tri}

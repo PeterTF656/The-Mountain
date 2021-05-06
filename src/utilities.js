@@ -86,6 +86,9 @@ export const TRIANGULATION = [
 28,
 158,
 ],
+// [
+
+// ],
 ];
 
 // Triangle drawing method
