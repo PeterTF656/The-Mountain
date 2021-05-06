@@ -8,6 +8,8 @@ import CardMedia from '@material-ui/core/CardMedia';
 import {Button, Box, Container, Grid, } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import FaceFeedback from "./table";
+import OrganFeedback from "./Accordion";
+
 
 const useStyles = makeStyles({
   root: {
@@ -125,7 +127,7 @@ setIsSendingOrgans(false)
 
   return (
     <Grid container className={classes.grid_root} spacing={2}>
-    <Grid item xs={6}>
+    <Grid item xs={4}>
     <Card className={classes.root}>
       <CardActionArea>
         <CardMedia
@@ -154,7 +156,7 @@ setIsSendingOrgans(false)
       </CardActions>
     </Card>
     </Grid>    
-    <Grid item xs={6}>
+    <Grid item xs={4}>
     {resSkin && <FaceFeedback 
         skin_color={skin_color[resSkin.result.skin_color.value]}
         left_eyelids={left_eyelids[resSkin.result.left_eyelids.value]}
@@ -163,6 +165,13 @@ setIsSendingOrgans(false)
         dark_circle = {dark_circle[resSkin.result.dark_circle.value]}
         blackhead = {blackhead[resSkin.result.blackhead.value]}
         skin_type ={skin_type[resSkin.result.skin_type.skin_type]}
+    />}
+    </Grid>
+    <Grid item xs={4}>
+    {resOrgans && <OrganFeedback
+      court_resp = {resOrgans.court_resp}
+      eye_resp = {resOrgans.eye_resp}
+      nose_resp = {resOrgans.nose_resp}
     />}
     </Grid>
     </Grid>

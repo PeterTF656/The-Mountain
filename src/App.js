@@ -86,7 +86,7 @@ function App() {
 
   // take photos
     const capture = React.useCallback(() => {
-      const imageSrc = webcamRef.current.getScreenshot({width: 400, height: 400});
+      const imageSrc = webcamRef.current.getScreenshot();
       setImgSrc(imageSrc);
     }, [webcamRef, setImgSrc]);
     
@@ -285,16 +285,17 @@ function App() {
       </Button>
         </ButtonGroup>
         </Grid>
-        </Grid>
-      <div>current draw is {draw}.</div>
-      <Box style={{margin: 10 }}>
+        
+      {/* <div>current draw is {draw}.</div> */}
+      <Grid item xs={12}>
         {imgSrc && (
             // <img
             //   src={imgSrc}
             // />
             <ImgCard img={imgSrc} />
         )}
-        </Box>
+        </Grid>
+        </Grid>
       </Container>
       <div>
       <DasAlerts
