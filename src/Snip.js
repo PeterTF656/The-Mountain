@@ -18,6 +18,8 @@ const useStyles = makeStyles({
   },
 });
 
+let resSkin;
+let resOrgans;
 export default function ImgCard(props) {
   const classes = useStyles();
   const [isSendingSkin, setIsSendingSkin] = useState(false);
@@ -67,12 +69,13 @@ export default function ImgCard(props) {
 //         console.log(pair[0]+ ', '+ pair[1]); 
 //    }
    try{    
-    const result = await fetch('https://aebbe9f73e8e.ngrok.io/predict', {
+    const result = await fetch('http://127.0.0.1:5000/skin', {
       method: 'POST',
       //headers: { "Content-Type": "multipart/form-data" },
       body: data,
   });
     const res = await result.json(); 
+    resSkin = res;
     console.log(res)
   }catch(e){
   return null;
@@ -105,13 +108,14 @@ const sendOrganRequest = useCallback(async() => {
 //         console.log(pair[0]+ ', '+ pair[1]); 
 //    }
  try{    
-  const result = await fetch('https://aebbe9f73e8e.ngrok.io/predict', {
+  const result = await fetch('http://127.0.0.1:5000/face_analysis', {
     method: 'POST',
     //headers: { "Content-Type": "multipart/form-data" },
     body: data,
 });
   const res = await result.json(); 
   console.log(res)
+  resOrgans = res;
 }catch(e){
 return null;
 }
@@ -151,15 +155,15 @@ setIsSendingOrgans(false)
     </Card>
     </Grid>    
     <Grid item xs={6}>
-    <FaceFeedback 
-        skin_color={skin_color[res.result.skin_color.value]}
-        left_eyelids={left_eyelids[res.result.left_eyelids.value]}
-        right_eyelids={right_eyelids[res.result.right_eyelids.value]}
-        crows_feet={crows_feet[res.result.crows_feet.value]}
-        dark_circle = {dark_circle[res.result.dark_circle.value]}
-        blackhead = {blackhead[res.result.blackhead.value]}
-        skin_type ={skin_type[res.result.skin_type.skin_type]}
-    />
+    {resSkin && <FaceFeedback 
+        skin_color={skin_color[resSkin.result.skin_color.value]}
+        left_eyelids={left_eyelids[resSkin.result.left_eyelids.value]}
+        right_eyelids={right_eyelids[resSkin.result.right_eyelids.value]}
+        crows_feet={crows_feet[resSkin.result.crows_feet.value]}
+        dark_circle = {dark_circle[resSkin.result.dark_circle.value]}
+        blackhead = {blackhead[resSkin.result.blackhead.value]}
+        skin_type ={skin_type[resSkin.result.skin_type.skin_type]}
+    />}
     </Grid>
     </Grid>
   );
