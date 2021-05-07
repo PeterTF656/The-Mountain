@@ -235,6 +235,21 @@ function App() {
     }
   };
 
+
+  const requestMakeup = useCallback(async()=> {
+    try {
+      const result = await fetch('http://127.0.0.1:5000/reload_makeup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify("give me makeup")
+      });
+      
+      const res = await result.json(); 
+    } catch (error) {
+      return null
+    }
+  })
+
   return (
     <div className="App">
       <AppBar/>
@@ -277,6 +292,9 @@ function App() {
       <Button 
         onClick={()=> {setShowCanvas(false)}}>
           隐藏标点
+      </Button>
+      <Button onClick={requestMakeup}>
+        更新妆容
       </Button>
         </ButtonGroup>
         </Grid>
