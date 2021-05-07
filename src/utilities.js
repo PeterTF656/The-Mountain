@@ -1,4 +1,4 @@
-import data from './makeup_refs.json'
+import data from './data/makeup_refs.json'
 //  Triangulation sets of three
 
 console.log(data);

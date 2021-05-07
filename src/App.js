@@ -58,7 +58,7 @@ function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [showEyes, setShowEyes] = useState(false);
-  const [draw, setDraw] = useState(0);
+  const [draw, setDraw] = useState(-1);
   const [visible, setAlertVisibility] = useState(false);
   const [eyeVisible, setEyeVisibility] = useState(false);
   const [id_2, setId_2] = useState([0.1,0.1])
@@ -95,56 +95,10 @@ function App() {
   const runFace = useCallback(async (show) => {
     const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
     console.log(parts);
-    if (parts === 1){
+    if (parts>-1 && parts<11){
       console.log("running tri");
       timer = setInterval(() => {
-        detectTri(net) ;
-      }, 10);
-    }else if(parts === 2) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }else if(parts === 3) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }else if(parts === 4) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }else if(parts === 5) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }else if(parts === 6) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }else if(parts === 7) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }else if(parts === 8) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }else if(parts === 9) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
-      }, 10);
-    }
-    else if(parts === 10) {
-      console.log("running eyetwo");
-      timer = setInterval(() => {
-        detectEyeTwo(net) ; 
+        detectFaces(net) ;
       }, 10);
     }else{
       console.log("running dots");
@@ -197,49 +151,49 @@ function App() {
     }
   };
 
-  const detectTri = async (net) => {
-    if (
-      typeof webcamRef.current !== "undefined" &&
-      webcamRef.current !== null &&
-      webcamRef.current.video.readyState === 4
-    ) {
-      // Get Video Properties
-      const video = webcamRef.current.video;
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
+  // const detectTri = async (net) => {
+  //   if (
+  //     typeof webcamRef.current !== "undefined" &&
+  //     webcamRef.current !== null &&
+  //     webcamRef.current.video.readyState === 4
+  //   ) {
+  //     // Get Video Properties
+  //     const video = webcamRef.current.video;
+  //     const videoWidth = webcamRef.current.video.videoWidth;
+  //     const videoHeight = webcamRef.current.video.videoHeight;
 
-      // Set video width
-      webcamRef.current.video.width = videoWidth;
-      webcamRef.current.video.height = videoHeight;
+  //     // Set video width
+  //     webcamRef.current.video.width = videoWidth;
+  //     webcamRef.current.video.height = videoHeight;
 
-      // Set canvas width
-      if (canvasRef.current !== null) {
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
-      }
-      const face = await net.estimateFaces({input:video});
+  //     // Set canvas width
+  //     if (canvasRef.current !== null) {
+  //     canvasRef.current.width = videoWidth;
+  //     canvasRef.current.height = videoHeight;
+  //     }
+  //     const face = await net.estimateFaces({input:video});
 
-      if (typeof face["0"] !== "undefined") {        
-        setId_9(face["0"].scaledMesh[9]);
-        setId_10(face["0"].scaledMesh[10]);
-        setId_2(face["0"].scaledMesh[2]);
-        setId_152(face["0"].scaledMesh[152]);
-        setId_127(face["0"].scaledMesh[127]);
-        setId_130(face["0"].scaledMesh[130]); 
-        setId_243(face["0"].scaledMesh[243]);
-        setId_463(face["0"].scaledMesh[463]);
-        setId_359(face["0"].scaledMesh[359]);
-        setId_356(face["0"].scaledMesh[356]);
-      }
-      // Get canvas context
-      if (canvasRef.current !== null) {
-      const ctx = canvasRef.current.getContext("2d");
-      requestAnimationFrame(()=>{drawTri(face, ctx, 1, showCanvas)});
-      }
-    }
-  };
+  //     if (typeof face["0"] !== "undefined") {        
+  //       setId_9(face["0"].scaledMesh[9]);
+  //       setId_10(face["0"].scaledMesh[10]);
+  //       setId_2(face["0"].scaledMesh[2]);
+  //       setId_152(face["0"].scaledMesh[152]);
+  //       setId_127(face["0"].scaledMesh[127]);
+  //       setId_130(face["0"].scaledMesh[130]); 
+  //       setId_243(face["0"].scaledMesh[243]);
+  //       setId_463(face["0"].scaledMesh[463]);
+  //       setId_359(face["0"].scaledMesh[359]);
+  //       setId_356(face["0"].scaledMesh[356]);
+  //     }
+  //     // Get canvas context
+  //     if (canvasRef.current !== null) {
+  //     const ctx = canvasRef.current.getContext("2d");
+  //     requestAnimationFrame(()=>{drawTri(face, ctx, 1, showCanvas)});
+  //     }
+  //   }
+  // };
 
-  const detectEyeTwo = async (net) => {
+  const detectFaces = async (net) => {
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null &&
