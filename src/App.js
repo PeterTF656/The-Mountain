@@ -22,7 +22,7 @@ import DasAlerts from "./report";
 import AppBar from "./AppBar";
 
 import {Button, Container, ButtonGroup, makeStyles, Fab, Grid, Box} from '@material-ui/core';
-import ImgCard from "./Snip.js";
+import {ImgCard} from "./Snip";
 import CameraAltRoundedIcon from '@material-ui/icons/CameraAltRounded';
 // import EditIcon from '@material-ui/icons/Edit';
 // import UpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -101,6 +101,47 @@ function App() {
         detectTri(net) ;
       }, 10);
     }else if(parts === 2) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else if(parts === 3) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else if(parts === 4) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else if(parts === 5) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else if(parts === 6) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else if(parts === 7) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else if(parts === 8) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }else if(parts === 9) {
+      console.log("running eyetwo");
+      timer = setInterval(() => {
+        detectEyeTwo(net) ; 
+      }, 10);
+    }
+    else if(parts === 10) {
       console.log("running eyetwo");
       timer = setInterval(() => {
         detectEyeTwo(net) ; 
@@ -235,7 +276,7 @@ function App() {
       // Get canvas context
       if (canvasRef.current !== null) {
       const ctx = canvasRef.current.getContext("2d");
-      requestAnimationFrame(()=>{drawTri(face, ctx, 2, showCanvas)});
+      requestAnimationFrame(()=>{drawTri(face, ctx, parts, showCanvas)});
       }
     }
   };

@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 
 let resSkin;
 let resOrgans;
-export default function ImgCard(props) {
+export function ImgCard(props) {
   const classes = useStyles();
   const [isSendingSkin, setIsSendingSkin] = useState(false);
   const [isSendingOrgans, setIsSendingOrgans] = useState(false);
@@ -78,7 +78,7 @@ export default function ImgCard(props) {
   });
     const res = await result.json(); 
     resSkin = res;
-    console.log(res)
+    // console.log(res)
   }catch(e){
   return null;
 }
@@ -116,7 +116,7 @@ const sendOrganRequest = useCallback(async() => {
     body: data,
 });
   const res = await result.json(); 
-  console.log(res)
+  // console.log(res)
   resOrgans = res;
 }catch(e){
 return null;
@@ -175,5 +175,9 @@ setIsSendingOrgans(false)
     />}
     </Grid>
     </Grid>
+    
   );
 }
+
+// export const resOrgans;
+
