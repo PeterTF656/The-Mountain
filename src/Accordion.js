@@ -14,6 +14,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
+  body: {
+    fontSize: theme.typography.pxToRem(8),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
 }));
 
 export default function OrganFeedback(props) {
@@ -30,7 +34,7 @@ export default function OrganFeedback(props) {
           <Typography className={classes.heading}>三庭五眼分析</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
+          <Typography className={classes.body}>
             {props.court_resp}
           </Typography>
         </AccordionDetails>
@@ -44,7 +48,7 @@ export default function OrganFeedback(props) {
           <Typography className={classes.heading}>眼部分析</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
+          <Typography className={classes.body}>
             {props.eye_resp}
           </Typography>
         </AccordionDetails>
@@ -58,7 +62,7 @@ export default function OrganFeedback(props) {
           <Typography className={classes.heading}>鼻部分析</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
+          <Typography className={classes.body}>
           {props.eye_resp}
           </Typography>
         </AccordionDetails>

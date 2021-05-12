@@ -140,7 +140,7 @@ export const drawTri = (predictions, ctx, key, dots) => {
         // drawPath(ctx, points, true);
         drawPath(ctx, points, false);
       }*/
-      if (key<11 && key>-1){
+      if (key<data.steps.length && key>-1){
     const step = data.steps[key]
       var points = []
       for (let j = 0; j < step.length; j++){

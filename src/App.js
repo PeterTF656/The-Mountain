@@ -11,6 +11,7 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import "./App.css";
 import * as tf from "@tensorflow/tfjs";
+import data from './data/makeup_refs.json'
 
 
 // NEW MODEL
@@ -74,6 +75,8 @@ function App() {
   const [showCanvas, setShowCanvas] = useState(true)
   const [imgSrc, setImgSrc] = React.useState(null);
 
+  // console.log(data.steps.length);
+
   useEffect(()=>{
     console.log("useeffect canvas:", showCanvas)
     if (showCanvas) {
@@ -95,7 +98,7 @@ function App() {
   const runFace = useCallback(async (show) => {
     const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
     console.log(parts);
-    if (parts>-1 && parts<11){
+    if (parts>-1 && parts<data.steps.length){
       console.log("running tri");
       timer = setInterval(() => {
         detectFaces(net) ;
@@ -245,6 +248,7 @@ function App() {
       });
       
       const res = await result.json(); 
+      
     } catch (error) {
       return null
     }
