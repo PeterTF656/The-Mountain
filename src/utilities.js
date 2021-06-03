@@ -1,4 +1,7 @@
+import data from './data/makeup_refs.json'
 //  Triangulation sets of three
+
+console.log(data);
 export const TRIANGULATION = [
   [0, 0, 0],[52,
   65,
@@ -86,7 +89,20 @@ export const TRIANGULATION = [
 28,
 158,
 ],
+// [
+
+// ],
 ];
+
+const get_xyz = (ref, keypoints) => {
+  //console.log(keypoints[ref[3]], ref[0])
+  var xyz = [ref[0]*keypoints[ref[3]][0] + ref[1]*keypoints[ref[4]][0] + ref[2]*keypoints[ref[5]][0],
+  ref[0]*keypoints[ref[3]][1] + ref[1]*keypoints[ref[4]][1] + ref[2]*keypoints[ref[5]][1], 
+  ref[0]*keypoints[ref[3]][2] + ref[1]*keypoints[ref[4]][2] + ref[2]*keypoints[ref[5]][2]]
+
+  return xyz
+}
+
 
 // Triangle drawing method
 const drawPath = (ctx, points, closePath) => {
@@ -111,6 +127,7 @@ export const drawTri = (predictions, ctx, key, dots) => {
       const keypoints = prediction.scaledMesh;
 
       //  Draw Triangles
+      /*
       // console.log(TRIANGULATION[key]);
       for (let i = 0; i < TRIANGULATION[key].length / 3; i++) {
         // Get sets of three keypoints for the triangle
@@ -120,8 +137,20 @@ export const drawTri = (predictions, ctx, key, dots) => {
           TRIANGULATION[key][i * 3 + 2],
         ].map((index) => keypoints[index]);
         //  Draw triangle
-        drawPath(ctx, points, true);
+        // drawPath(ctx, points, true);
+        drawPath(ctx, points, false);
+      }*/
+      if (key<data.steps.length && key>-1){
+    const step = data.steps[key]
+      var points = []
+      for (let j = 0; j < step.length; j++){
+        var xyz = get_xyz(step[j], keypoints)
+        points.push(xyz)
+        
       }
-    });
+      console.log(points);
+      drawPath(ctx, points,false);
+      }else{return null}}
+    );
   }
 };
